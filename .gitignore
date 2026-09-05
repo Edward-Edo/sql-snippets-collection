@@ -1,0 +1,25 @@
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual env
+.venv/
+venv/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Tooling
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# Misc
+*.log
+*.db
+*.sqlite
+*.sqlite3
