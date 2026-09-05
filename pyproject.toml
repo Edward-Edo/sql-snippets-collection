@@ -21,6 +21,10 @@ classifiers = [
     "Topic :: Database",
     "Topic :: Software Development",
 ]
+dependencies = [
+    "click>=8.1",
+    "rich>=13.0",
+]
 
 [project.optional-dependencies]
 dev = [
