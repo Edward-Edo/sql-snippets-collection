@@ -28,7 +28,10 @@ def main() -> None:
 )
 @click.option(
     "--dialect",
-    type=click.Choice(["auto", "mysql", "postgresql", "sqlite", "laravel", "any"], case_sensitive=False),
+    type=click.Choice(
+        ["auto", "mysql", "postgresql", "sqlite", "laravel", "any"],
+        case_sensitive=False,
+    ),
     default="auto",
     show_default=True,
     help="Dialect para validación. 'auto' infiere del nombre del archivo.",
