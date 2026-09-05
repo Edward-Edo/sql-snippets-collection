@@ -6,12 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from devsql.validator import (
-    _first_statement,
-    _strip_comments,
-    discover_snippets,
-    validate_snippet,
-)
+from devsql.validator import _first_statement, _strip_comments, discover_snippets, validate_snippet
 
 
 def test_strip_comments() -> None:
