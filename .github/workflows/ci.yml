@@ -32,7 +32,7 @@ jobs:
 
       - name: Run validator
         run: |
-          devsql validate --dialect sqlite snippets/
+          devsql validate --dialect auto snippets/
 
       - name: Run tests
         run: pytest

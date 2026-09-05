@@ -28,10 +28,10 @@ def main() -> None:
 )
 @click.option(
     "--dialect",
-    type=click.Choice(["mysql", "postgresql", "sqlite", "any"], case_sensitive=False),
-    default="any",
+    type=click.Choice(["auto", "mysql", "postgresql", "sqlite", "laravel", "any"], case_sensitive=False),
+    default="auto",
     show_default=True,
-    help="Dialect para validación.",
+    help="Dialect para validación. 'auto' infiere del nombre del archivo.",
 )
 @click.option("--fail-fast", is_flag=True, help="Detener al primer error.")
 def validate(path: Path, dialect: str, fail_fast: bool) -> None:

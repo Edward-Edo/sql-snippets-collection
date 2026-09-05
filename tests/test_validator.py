@@ -10,6 +10,7 @@ from devsql.validator import (
     _first_statement,
     _strip_comments,
     discover_snippets,
+    infer_dialect,
     validate_snippet,
 )
 
@@ -38,29 +39,42 @@ def test_discover_snippets(tmp_path: Path) -> None:
     assert all("hidden" not in str(s) for s in snippets)
 
 
+def test_infer_dialect_from_filename(tmp_path: Path) -> None:
+    (tmp_path / "mysql_x.sql").write_text("SELECT 1")
+    (tmp_path / "postgresql_y.sql").write_text("SELECT 1")
+    (tmp_path / "laravel_z.sql").write_text("SELECT 1")
+    (tmp_path / "custom.sql").write_text("SELECT 1")
+    snippets = sorted(tmp_path.glob("*.sql"))
+    mapping = {s.name: infer_dialect(s) for s in snippets}
+    assert mapping["mysql_x.sql"] == "mysql"
+    assert mapping["postgresql_y.sql"] == "postgresql"
+    assert mapping["laravel_z.sql"] == "laravel"
+    assert mapping["custom.sql"] == "any"
+
+
 def test_validate_valid_sqlite(tmp_path: Path) -> None:
-    snippet = tmp_path / "valid.sql"
+    snippet = tmp_path / "any_valid.sql"
     snippet.write_text("CREATE TABLE t (id INTEGER PRIMARY KEY);", encoding="utf-8")
-    ok, msg = validate_snippet(snippet, dialect="sqlite")
+    ok, msg = validate_snippet(snippet, dialect="auto")
     assert ok, msg
 
 
 def test_validate_invalid_sqlite(tmp_path: Path) -> None:
-    snippet = tmp_path / "invalid.sql"
+    snippet = tmp_path / "any_invalid.sql"
     snippet.write_text("SELECT FROM WHERE;", encoding="utf-8")
-    ok, _ = validate_snippet(snippet, dialect="sqlite")
+    ok, _ = validate_snippet(snippet, dialect="auto")
     assert not ok
 
 
 def test_validate_empty(tmp_path: Path) -> None:
-    snippet = tmp_path / "empty.sql"
+    snippet = tmp_path / "any_empty.sql"
     snippet.write_text("", encoding="utf-8")
-    ok, _ = validate_snippet(snippet, dialect="sqlite")
+    ok, _ = validate_snippet(snippet, dialect="auto")
     assert not ok
 
 
 def test_real_collection_validates() -> None:
-    """Asegura que todos los snippets reales del repo son válidos contra SQLite."""
+    """Asegura que todos los snippets reales del repo pasan validación."""
     from devsql.validator import discover_snippets
 
     root = Path(__file__).resolve().parent.parent / "snippets"
@@ -68,7 +82,7 @@ def test_real_collection_validates() -> None:
         pytest.skip("Directorio snippets/ no presente en este entorno.")
     failures = []
     for s in discover_snippets(root):
-        ok, msg = validate_snippet(s, dialect="sqlite")
+        ok, msg = validate_snippet(s, dialect="auto")
         if not ok:
             failures.append((s, msg))
     assert not failures, f"Snippets inválidos: {failures}"
