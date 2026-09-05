@@ -11,7 +11,7 @@ _SQL_BLOCK_COMMENT = re.compile(r"/\*.*?\*/", re.DOTALL)
 
 
 def discover_snippets(root: Path) -> list[Path]:
-    """Descubre archivos .sql en `root` recursivamente, excluyendo directorios ocultos."""
+    """Descubre archivos .sql en `root`, excluyendo directorios ocultos."""
     return sorted(p for p in root.rglob("*.sql") if not any(part.startswith(".") for part in p.parts))
 
 
